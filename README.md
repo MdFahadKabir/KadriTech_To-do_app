@@ -24,3 +24,7 @@ The Todo application is designed to help users manage tasks efficiently. It prov
   npm run dev
 ```
     
+## Demo
+
+https://kadri-tech-to-do-app.vercel.app/
+
