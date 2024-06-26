@@ -21,7 +21,7 @@ const SearchComponent = ({ id, placeholder, handleSearch }) => {
         <input
           type="search"
           id={id}
-          className="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-white focus:ring-blue-500 focus:border-blue-500"
+          className="block w-full p-4 ps-10 text-sm text-gray-900 border-0 rounded-lg bg-white outline-none"
           placeholder={placeholder}
           onChange={handleChange}
           required

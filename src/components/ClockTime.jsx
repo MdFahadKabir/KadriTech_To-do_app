@@ -49,7 +49,7 @@ const ClockTime = () => {
         </div>
 
         {/* add local degital time  like wednesday, June 26, 2024 || Hour:min:seconds */}
-        <h1 className="mt-28 text-2xl font-bold text-gray-800 border-4">
+        <h1 className="mt-28 text-lg md:text-xl lg:text-2xl xl:text-2xl font-bold text-gray-800 border-4">
           {day}, {date} || {hours.toString().padStart(2, "0")}:
           {minutes.toString().padStart(2, "0")}:
           {seconds.toString().padStart(2, "0")}

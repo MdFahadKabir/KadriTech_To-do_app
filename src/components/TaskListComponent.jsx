@@ -2,16 +2,22 @@ import React, { useState, useRef, useEffect } from "react";
 import { BsTextParagraph, BsHash, BsThreeDotsVertical } from "react-icons/bs";
 import { GrAttachment } from "react-icons/gr";
 import Modal from "./Modal";
-
 import DateTimePicker from "react-datetime-picker";
 import "react-datetime-picker/dist/DateTimePicker.css";
 import "react-calendar/dist/Calendar.css";
 import "react-clock/dist/Clock.css";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 const TaskListComponent = ({ task, moveTask }) => {
   const [isOpenDropdown, setIsOpenDropdown] = useState(false);
   const [isOpenModal, setIsOpenModal] = useState(false);
-  const [dateTime, setDateTime] = useState(new Date());
-  const [isOverdue, setIsOverdue] = useState(false); // State to track overdue status
+  const [dateTime, setDateTime] = useState(new Date(task.datetime));
+  const [remainingTime, setRemainingTime] = useState("");
+  const [isOverdue, setIsOverdue] = useState(false);
+  const [lastWarningShown, setLastWarningShown] = useState(
+    task.lastWarningShown || null
+  );
   const dropdownRef = useRef(null);
   const modalRef = useRef(null);
 
@@ -33,7 +39,64 @@ const TaskListComponent = ({ task, moveTask }) => {
     };
   }, []);
 
-  // Effect to check overdue status when dateTime or task.status changes
+  useEffect(() => {
+    const interval = setInterval(() => {
+      updateRemainingTime();
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [task.datetime]);
+
+  const updateRemainingTime = () => {
+    const now = new Date();
+    const deadline = new Date(task.datetime);
+
+    if (task.status === "Ongoing" && deadline > now) {
+      const timeDiff = deadline - now;
+      const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor(
+        (timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+      );
+      const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+      setRemainingTime(`${days}d ${hours}h ${minutes}m ${seconds}s left`);
+      setIsOverdue(false);
+    } else if (task.status === "Ongoing" && deadline <= now) {
+      setIsOverdue(true);
+      setRemainingTime("");
+      if (!lastWarningShown || now - new Date(lastWarningShown) > 60000) {
+        toast.warn(`Task "${task.title}" is overdue!`);
+        setLastWarningShown(now);
+        task.lastWarningShown = now;
+      }
+    } else {
+      setRemainingTime("");
+      setIsOverdue(false);
+    }
+  };
+
+  const handleMoveTask = (newStatus) => {
+    moveTask(task.id, newStatus);
+    setIsOpenDropdown(false);
+  };
+
+  const openUpdateModal = () => {
+    setIsOpenModal(true);
+    setDateTime(task.datetime ? new Date(task.datetime) : new Date());
+    setIsOpenDropdown(false);
+  };
+
+  const closeModal = () => {
+    setIsOpenModal(false);
+    setDateTime(new Date());
+  };
+
+  const updateTaskDateTime = () => {
+    task.datetime = dateTime;
+    updateRemainingTime();
+    toast.success(`Deadline for "${task.title}" updated!`);
+    closeModal();
+  };
+
   useEffect(() => {
     const now = new Date();
     if (
@@ -47,46 +110,14 @@ const TaskListComponent = ({ task, moveTask }) => {
     }
   }, [task.datetime, task.status]);
 
-  const handleMoveTask = (newStatus) => {
-    moveTask(task.id, newStatus);
-    setIsOpenDropdown(false);
-  };
-
-  const openUpdateModal = () => {
-    setIsOpenModal(true);
-    setDateTime(task.datetime ? new Date(task.datetime) : new Date());
-    setIsOpenDropdown(false); // Close dropdown when opening modal
-  };
-
-  const closeModal = () => {
-    setIsOpenModal(false);
-    setDateTime(new Date()); // Reset DateTimePicker
-  };
-
-  const updateTaskDateTime = () => {
-    // Update task date/time logic goes here
-    console.log("Updated Date/Time:", dateTime);
-
-    // Example validation for overdue task
-    const now = new Date();
-    if (task.status === "Ongoing" && task.datetime && task.datetime < now) {
-      setIsOverdue(true); // Set overdue state
-      alert("This task is overdue!"); // Display alert (optional)
-    } else {
-      setIsOverdue(false);
-    }
-
-    closeModal(); // Close modal after updating
-  };
-
   return (
-    <div className="border p-3 rounded-md bg-white mt-5">
+    <div className="border-0 p-3 rounded-md bg-white mt-5 shadow-md ">
       <div className="flex justify-between">
         <p>{task.title}</p>
         <div className="relative " ref={dropdownRef}>
           <button
             onClick={toggleDropdown}
-            className="p-2 bg-gray-200 rounded-full hover:bg-gray-300 cursor-pointer"
+            className="p-2  rounded-full hover:bg-gray-300 cursor-pointer"
           >
             <BsThreeDotsVertical />
           </button>
@@ -128,16 +159,29 @@ const TaskListComponent = ({ task, moveTask }) => {
         </div>
         <div className="flex flex-row">
           <BsHash className="my-auto" size={16} />
-          {/* Dynamic ID */}
           <p className="text-sm">{task.id}</p>
         </div>
       </div>
-      {isOverdue && (
-        <p className="text-red-500 text-sm mt-2">This task is overdue!</p>
+
+      {task.status === "Ongoing" && (
+        <>
+          <div className="flex justify-end">
+            <div className="text-white bg-red-500 text-sm mt-2 text-end   inline-block rounded-md p-2">
+              {!task.datetime ? (
+                <p>Please update deadline!</p>
+              ) : isOverdue ? (
+                <p>This task is overdue!</p>
+              ) : (
+                <p>{remainingTime}</p>
+              )}
+            </div>
+          </div>
+        </>
       )}
+
       {task.status === "Ongoing" && (
         <button
-          className="bg-blue text-white border-0 rounded-md w-full text-center text-sm font-semibold py-2 cursor-pointer mt-4"
+          className="bg-blue text-white border-0 rounded-md w-full text-center text-sm font-semibold py-2 cursor-pointer mt-4 hover:bg-blue/50 duration-700"
           onClick={openUpdateModal}
         >
           Update Date
