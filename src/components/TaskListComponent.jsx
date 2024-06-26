@@ -111,101 +111,105 @@ const TaskListComponent = ({ task, moveTask }) => {
   }, [task.datetime, task.status]);
 
   return (
-    <div className="border-0 p-3 rounded-md bg-white mt-5 shadow-md ">
-      <div className="flex justify-between">
-        <p>{task.title}</p>
-        <div className="relative " ref={dropdownRef}>
-          <button
-            onClick={toggleDropdown}
-            className="p-2  rounded-full hover:bg-gray-300 cursor-pointer"
-          >
-            <BsThreeDotsVertical />
-          </button>
-          {isOpenDropdown && (
-            <div className="absolute right-0 mt-2 w-auto bg-white border-0 rounded-md shadow-lg z-10">
-              {task.status !== "New" && (
-                <p
-                  className="block px-4 py-2 text-sm font-semibold text-white hover:bg-blue/50 bg-blue cursor-pointer"
-                  onClick={() => handleMoveTask("New")}
-                >
-                  Move to New
-                </p>
-              )}
-              {task.status !== "Ongoing" && (
-                <p
-                  className="block px-4 py-2 text-sm font-semibold text-white hover:bg-orange/50 bg-orange cursor-pointer"
-                  onClick={() => handleMoveTask("Ongoing")}
-                >
-                  Move to Ongoing
-                </p>
-              )}
-              {task.status !== "Done" && (
-                <p
-                  className="block px-4 py-2 text-sm font-semibold text-white hover:bg-green/50 bg-green cursor-pointer"
-                  onClick={() => handleMoveTask("Done")}
-                >
-                  Move to Done
-                </p>
-              )}
-            </div>
-          )}
-        </div>
-      </div>
-      <div className="flex flex-row pt-3">
-        <BsTextParagraph className="my-auto" size={16} />
-        <div className="flex flex-row mx-2">
-          <GrAttachment className="my-auto" size={16} />
-          <p className="text-sm">3</p>
-        </div>
-        <div className="flex flex-row">
-          <BsHash className="my-auto" size={16} />
-          <p className="text-sm">{task.id}</p>
-        </div>
-      </div>
-
-      {task.status === "Ongoing" && (
-        <>
-          <div className="flex justify-end">
-            <div className="text-white bg-red-500 text-sm mt-2 text-end   inline-block rounded-md p-2">
-              {!task.datetime ? (
-                <p>Please update deadline!</p>
-              ) : isOverdue ? (
-                <p>This task is overdue!</p>
-              ) : (
-                <p>{remainingTime}</p>
+    <>
+      <div className="border-0 p-3 rounded-md bg-white mt-5 shadow-md ">
+        <div>
+          <div className="flex justify-between">
+            <p>{task.title}</p>
+            <div className="relative " ref={dropdownRef}>
+              <button
+                onClick={toggleDropdown}
+                className="p-2  rounded-full hover:bg-gray-300 cursor-pointer"
+              >
+                <BsThreeDotsVertical />
+              </button>
+              {isOpenDropdown && (
+                <div className="absolute right-0 mt-2 w-auto bg-white border-0 rounded-md shadow-lg z-10">
+                  {task.status !== "New" && (
+                    <p
+                      className="block px-4 py-2 text-sm font-semibold text-white hover:bg-blue/50 bg-blue cursor-pointer"
+                      onClick={() => handleMoveTask("New")}
+                    >
+                      Move to New
+                    </p>
+                  )}
+                  {task.status !== "Ongoing" && (
+                    <p
+                      className="block px-4 py-2 text-sm font-semibold text-white hover:bg-orange/50 bg-orange cursor-pointer"
+                      onClick={() => handleMoveTask("Ongoing")}
+                    >
+                      Move to Ongoing
+                    </p>
+                  )}
+                  {task.status !== "Done" && (
+                    <p
+                      className="block px-4 py-2 text-sm font-semibold text-white hover:bg-green/50 bg-green cursor-pointer"
+                      onClick={() => handleMoveTask("Done")}
+                    >
+                      Move to Done
+                    </p>
+                  )}
+                </div>
               )}
             </div>
           </div>
-        </>
-      )}
+          <div className="flex flex-row pt-3">
+            <BsTextParagraph className="my-auto" size={16} />
+            <div className="flex flex-row mx-2">
+              <GrAttachment className="my-auto" size={16} />
+              <p className="text-sm">3</p>
+            </div>
+            <div className="flex flex-row">
+              <BsHash className="my-auto" size={16} />
+              <p className="text-sm">{task.id}</p>
+            </div>
+          </div>
 
-      {task.status === "Ongoing" && (
-        <button
-          className="bg-blue text-white border-0 rounded-md w-full text-center text-sm font-semibold py-2 cursor-pointer mt-4 hover:bg-blue/50 duration-700"
-          onClick={openUpdateModal}
-        >
-          Update Date
-        </button>
-      )}
-      <Modal isOpen={isOpenModal} onClose={closeModal} modalRef={modalRef}>
-        <div className="flex flex-col">
-          <h2 className="text-xl font-bold mb-4">{task.title}</h2>
-          <p className="mb-4">{task.description}</p>
-          <DateTimePicker
-            onChange={setDateTime}
-            value={dateTime}
-            disableClock={true}
-            clearIcon={null}
-          />
-          <button
-            className="bg-blue text-white border-0 rounded-md w-full text-center text-sm font-semibold py-2 cursor-pointer mt-4"
-            onClick={updateTaskDateTime}
-          >
-            Update
-          </button>
+          {task.status === "Ongoing" && (
+            <>
+              <div className="flex justify-end">
+                <div className="text-white bg-red-500 text-sm mt-2 text-end   inline-block rounded-md p-2">
+                  {!task.datetime ? (
+                    <p>Please update deadline!</p>
+                  ) : isOverdue ? (
+                    <p>This task is overdue!</p>
+                  ) : (
+                    <p>{remainingTime}</p>
+                  )}
+                </div>
+              </div>
+            </>
+          )}
+
+          {task.status === "Ongoing" && (
+            <button
+              className="bg-blue text-white border-0 rounded-md w-full text-center text-sm font-semibold py-2 cursor-pointer mt-4 hover:bg-blue/50 duration-700"
+              onClick={openUpdateModal}
+            >
+              Update Date
+            </button>
+          )}
+          <Modal isOpen={isOpenModal} onClose={closeModal} modalRef={modalRef}>
+            <div className="flex flex-col">
+              <h2 className="text-xl font-bold mb-4">{task.title}</h2>
+              <p className="mb-4">{task.description}</p>
+              <DateTimePicker
+                onChange={setDateTime}
+                value={dateTime}
+                disableClock={true}
+                clearIcon={null}
+              />
+              <button
+                className="bg-blue text-white border-0 rounded-md w-full text-center text-sm font-semibold py-2 cursor-pointer mt-4"
+                onClick={updateTaskDateTime}
+              >
+                Update
+              </button>
+            </div>
+          </Modal>
         </div>
-      </Modal>
-    </div>
+      </div>
+    </>
   );
 };
 

@@ -1,126 +1,10 @@
-// import React, { useState, useEffect } from "react";
-// import TaskComponent from "../components/TaskComponent";
-// import AddTaskButton from "../components/AddTaskButton";
-// import ClockTime from "../components/ClockTime";
-// import { ToastContainer, toast } from "react-toastify";
-// import "react-toastify/dist/ReactToastify.css";
-
-// const Todo = () => {
-//   const [tasks, setTasks] = useState([]);
-
-//   useEffect(() => {
-//     const storedTasks = JSON.parse(localStorage.getItem("tasks"));
-//     if (storedTasks) {
-//       setTasks(storedTasks);
-//     }
-//   }, []);
-
-//   useEffect(() => {
-//     localStorage.setItem("tasks", JSON.stringify(tasks));
-//   }, [tasks]);
-
-//   useEffect(() => {
-//     const checkOverdueTasks = () => {
-//       const now = new Date();
-//       tasks.forEach((task) => {
-//         if (
-//           task.status === "Ongoing" &&
-//           task.datetime &&
-//           new Date(task.datetime) < now &&
-//           (!task.isWarningShown || task.lastWarningShown + 60000 <= now)
-//         ) {
-//           toast.warning(`This task "${task.title}" is overdue!`);
-//           setTasks((prevTasks) =>
-//             prevTasks.map((t) =>
-//               t.id === task.id
-//                 ? {
-//                     ...t,
-//                     isWarningShown: true,
-//                     lastWarningShown: now.getTime(),
-//                   }
-//                 : t
-//             )
-//           );
-//         }
-//       });
-//     };
-
-//     const interval = setInterval(checkOverdueTasks, 60000); // Check every minute
-//     return () => clearInterval(interval);
-//   }, [tasks]);
-
-//   const addTask = (task) => {
-//     setTasks([task, ...tasks]);
-//     toast.success(`Task "${task.title}" added!`);
-//   };
-
-//   const moveTask = (taskId, newStatus) => {
-//     const updatedTasks = tasks.map((task) =>
-//       task.id === taskId
-//         ? {
-//             ...task,
-//             status: newStatus,
-//             isWarningShown: false,
-//             lastWarningShown: null,
-//           }
-//         : task
-//     );
-//     setTasks(updatedTasks);
-//     localStorage.setItem("tasks", JSON.stringify(updatedTasks));
-//   };
-
-//   return (
-//     <>
-//       <div className="h-screen my-auto flex justify-center items-center w-screen">
-//         <div className="flex flex-col">
-//           <ClockTime />
-//           <p className="text-center py-5 text-2xl font-bold underline">
-//             Todo App
-//           </p>
-//           <div className="flex justify-between ">
-//             <div className="w-1/3 border mx-2 p-6 rounded-md bg-gray-light">
-//               <h2 className="text-lg font-bold mb-4">New Task </h2>
-//               <TaskComponent
-//                 tasks={tasks.filter((task) => task.status === "New")}
-//                 moveTask={moveTask}
-//                 taskType="New"
-//                 searchPlaceholder="Search New task"
-//               />
-//               <AddTaskButton addTask={addTask} />
-//             </div>
-//             <div className="w-1/3 border mx-2 p-6 rounded-md bg-gray-light">
-//               <h2 className="text-lg font-bold mb-4">OnGoing Task </h2>
-//               <TaskComponent
-//                 tasks={tasks.filter((task) => task.status === "Ongoing")}
-//                 moveTask={moveTask}
-//                 taskType="Ongoing"
-//                 searchPlaceholder="Search Ongoing task"
-//               />
-//             </div>
-//             <div className="w-1/3 border mx-2 p-6 rounded-md bg-gray-light">
-//               <h2 className="text-lg font-bold mb-4">Completed Task </h2>
-//               <TaskComponent
-//                 tasks={tasks.filter((task) => task.status === "Done")}
-//                 moveTask={moveTask}
-//                 taskType="Done"
-//                 searchPlaceholder="Search Completed task"
-//               />
-//             </div>
-//           </div>
-//         </div>
-//       </div>
-//       <ToastContainer />
-//     </>
-//   );
-// };
-
-// export default Todo;
 import React, { useState, useEffect } from "react";
 import TaskComponent from "../components/TaskComponent";
 import AddTaskButton from "../components/AddTaskButton";
 import ClockTime from "../components/ClockTime";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import abstact from "../assets/abstract.png";
 
 const Todo = () => {
   const [tasks, setTasks] = useState([]);
@@ -162,7 +46,7 @@ const Todo = () => {
       });
     };
 
-    const interval = setInterval(checkOverdueTasks, 60000); // Check every minute
+    const interval = setInterval(checkOverdueTasks, 60000);
     return () => clearInterval(interval);
   }, [tasks]);
 
